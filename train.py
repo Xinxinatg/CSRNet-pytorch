@@ -42,6 +42,7 @@ def main():
     best_prec1 = 1e6
     
     args = parser.parse_args()
+    args.num_output=129600
     args.original_lr = 1e-7
     args.lr = 1e-7
     args.batch_size    = 1
@@ -62,7 +63,7 @@ def main():
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
     torch.cuda.manual_seed(args.seed)
     
-    model = CSRNet()
+    model = crowdcounting_tr(num_classes=args.num_output)
     
     model = model.cuda()
     
