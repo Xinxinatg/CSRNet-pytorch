@@ -3,7 +3,7 @@ import os
 
 import warnings
 
-from model import CSRNet
+from model_transformer import crowdcounting_tr
 
 from utils import save_checkpoint
 
