@@ -1,7 +1,8 @@
 from PIL import Image
 import requests
 import matplotlib.pyplot as plt
-%config InlineBackend.figure_format = 'retina'
+from IPython.display import set_matplotlib_formats
+set_matplotlib_formats('retina')
 
 import torch
 from torch import nn
