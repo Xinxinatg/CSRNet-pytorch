@@ -30,7 +30,7 @@ class crowdcounting_tr(nn.Module):
     def __init__(self, num_classes, hidden_dim=256, nheads=8,
                  num_encoder_layers=6, num_decoder_layers=6,load_weights=False):
         super().__init__()
-
+        self.seen = 0
         # create ResNet-50 backbone
         self.backbone = resnet50()
         del self.backbone.fc
@@ -108,10 +108,12 @@ class crowdcounting_tr(nn.Module):
     def _init_weights(self):
       """ Initialize the weights """
       for m in self.modules():
-        if isinstance(m, (nn.Linear, nn.Embedding)):
+        if isinstance(m, nn.Linear):
             # Slightly different from the TF version which uses truncated_normal for initialization
             # cf https://github.com/pytorch/pytorch/pull/5617
-            module.weight.data.normal_(mean=0.0, std=self.config.initializer_range)
+  #          m.weight.data.normal_(mean=0.0, std=self.config.initializer_range)
+            torch.nn.init.xavier_uniform(m.weight)
+            m.bias.data.fill_(0.01)
  #       elif isinstance(m, BertLayerNorm):
    #         module.bias.data.zero_()
     #        module.weight.data.fill_(1.0)
