@@ -105,7 +105,7 @@ class crowdcounting_tr(nn.Module):
 #        return {'pred_logits': self.linear_class(h), 
    #     'pred_boxes': self.linear_bbox(h).sigmoid()}
   
-    def _init_weights(self, module):
+    def _init_weights(self):
       """ Initialize the weights """
       for m in self.modules():
         if isinstance(m, (nn.Linear, nn.Embedding)):
