@@ -42,7 +42,7 @@ def main():
     best_prec1 = 1e6
     
     args = parser.parse_args()
-    args.num_output=129600
+    args.num_output=6400
     args.original_lr = 1e-7
     args.lr = 1e-7
     args.batch_size    = 1
@@ -144,7 +144,7 @@ def train(train_list, model, criterion, optimizer, epoch):
         
         
         loss = criterion(output, target)
-        
+        loss = Variable(loss, requires_grad = True)
         losses.update(loss.item(), img.size(0))
         optimizer.zero_grad()
         loss.backward()
