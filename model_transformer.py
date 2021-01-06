@@ -112,9 +112,9 @@ class crowdcounting_tr(nn.Module):
             # Slightly different from the TF version which uses truncated_normal for initialization
             # cf https://github.com/pytorch/pytorch/pull/5617
             module.weight.data.normal_(mean=0.0, std=self.config.initializer_range)
-        elif isinstance(m, BertLayerNorm):
-            module.bias.data.zero_()
-            module.weight.data.fill_(1.0)
+ #       elif isinstance(m, BertLayerNorm):
+   #         module.bias.data.zero_()
+    #        module.weight.data.fill_(1.0)
         elif isinstance(m, nn.Conv2d):
               nn.init.normal_(m.weight, std=0.01)
               if m.bias is not None:
