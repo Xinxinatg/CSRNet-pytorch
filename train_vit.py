@@ -63,7 +63,7 @@ def main():
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
     torch.cuda.manual_seed(args.seed)
     
-    model = vit(
+    model = ViT(
     num_classes=args.num_output, 
     image_size = 640,
     patch_size = 32,
