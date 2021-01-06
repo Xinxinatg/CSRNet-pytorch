@@ -59,47 +59,47 @@ class crowdcounting_tr(nn.Module):
     def forward(self, inputs):
         # propagate inputs through ResNet-50 up to avg-pool layer
         x = self.backbone.conv1(inputs)
-        print('conv.shape',x.shape)
+   #     print('conv.shape',x.shape)
         x = self.backbone.bn1(x)
-        print('bn1.shape',x.shape)
+      #  print('bn1.shape',x.shape)
         x = self.backbone.relu(x)
-        print('relu.shape',x.shape)
+     #   print('relu.shape',x.shape)
         x = self.backbone.maxpool(x)
-        print('maxpool.shape',x.shape)
+      #  print('maxpool.shape',x.shape)
         x = self.backbone.layer1(x)
-        print('layer1.shape',x.shape)
+      #  print('layer1.shape',x.shape)
         x = self.backbone.layer2(x)
         x = self.backbone.layer3(x)
         x = self.backbone.layer4(x)
-        print('layer4.shape',x.shape)
+      #  print('layer4.shape',x.shape)
         # convert from 2048 to 256 feature planes for the transformer
         h = self.conv(x)
-        print('self.conv.shape',h.shape)
+      #  print('self.conv.shape',h.shape)
         # construct positional encodings
         H, W = h.shape[-2:]
         pos_temp=torch.cat([
             self.col_embed[:W].unsqueeze(0).repeat(H, 1, 1),
             self.row_embed[:H].unsqueeze(1).repeat(1, W, 1),
         ], dim=-1)
-        print('pos_temp',pos_temp.shape)
+      #  print('pos_temp',pos_temp.shape)
         pos = torch.cat([
             self.col_embed[:W].unsqueeze(0).repeat(H, 1, 1),
             self.row_embed[:H].unsqueeze(1).repeat(1, W, 1),
         ], dim=-1).flatten(0, 1).unsqueeze(1)
-        print('pos.shape',pos.shape)
+      #  print('pos.shape',pos.shape)
         temp=self.query_pos.unsqueeze(1)
-        print('self.query_pos.shape',temp.shape)
+       # print('self.query_pos.shape',temp.shape)
         # propagate through the transformer
         h = self.transformer(pos + 0.1 * h.flatten(2).permute(2, 0, 1),
                              self.query_pos.unsqueeze(1)).transpose(0, 1)
-        print('transformer_output',h.shape)
+      #  print('transformer_output',h.shape)
         h=self.linear_output(h)
-        print('linear_output.shape',h.shape)
+       # print('linear_output.shape',h.shape)
         b,_,h_temp,w_temp=inputs.shape
-        print('b',b)
-        print('h_temp',h_temp)
+       # print('b',b)
+      #  print('h_temp',h_temp)
         h= h.view(b,h_temp//8,w_temp//8)
-        print('output',h.shape)
+       # print('output',h.shape)
         return h
         # finally project transformer outputs to class labels and bounding boxes
 #        return {'pred_logits': self.linear_class(h), 
