@@ -55,7 +55,7 @@ class crowdcounting_tr(nn.Module):
         self.col_embed = nn.Parameter(torch.rand(50, hidden_dim // 2))
         if not load_weights:
             mod = models.vgg16(pretrained = True)
-            self._initialize_weights()
+            self._init_weights()
     def forward(self, inputs):
         # propagate inputs through ResNet-50 up to avg-pool layer
         x = self.backbone.conv1(inputs)
@@ -98,7 +98,7 @@ class crowdcounting_tr(nn.Module):
         b,_,h_temp,w_temp=inputs.shape
         print('b',b)
         print('h_temp',h_temp)
-        h=np.reshape(h,(b,h_temp//8,w_temp//8))
+        h= h.view(h,(b,h_temp//8,w_temp//8))
         print('output',h.shape)
         return h
         # finally project transformer outputs to class labels and bounding boxes
@@ -108,16 +108,16 @@ class crowdcounting_tr(nn.Module):
     def _init_weights(self, module):
       """ Initialize the weights """
       for m in self.modules():
-      if isinstance(m, (nn.Linear, nn.Embedding)):
-          # Slightly different from the TF version which uses truncated_normal for initialization
-          # cf https://github.com/pytorch/pytorch/pull/5617
-          module.weight.data.normal_(mean=0.0, std=self.config.initializer_range)
-      elif isinstance(m, BertLayerNorm):
-          module.bias.data.zero_()
-          module.weight.data.fill_(1.0)
-      elif isinstance(m, nn.Conv2d):
-            nn.init.normal_(m.weight, std=0.01)
-            if m.bias is not None:
-                nn.init.constant_(m.bias, 0)
-      if isinstance(m, nn.Linear) and module.bias is not None:
-          module.bias.data.zero_()
+        if isinstance(m, (nn.Linear, nn.Embedding)):
+            # Slightly different from the TF version which uses truncated_normal for initialization
+            # cf https://github.com/pytorch/pytorch/pull/5617
+            module.weight.data.normal_(mean=0.0, std=self.config.initializer_range)
+        elif isinstance(m, BertLayerNorm):
+            module.bias.data.zero_()
+            module.weight.data.fill_(1.0)
+        elif isinstance(m, nn.Conv2d):
+              nn.init.normal_(m.weight, std=0.01)
+              if m.bias is not None:
+                  nn.init.constant_(m.bias, 0)
+  #      if isinstance(m, nn.Linear) and module.bias is not None:
+     #       module.bias.data.zero_()
