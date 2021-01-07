@@ -99,6 +99,7 @@ class crowdcounting_tr(nn.Module):
        # print('b',b)
       #  print('h_temp',h_temp)
         h= h.view(b,h_temp//8,w_temp//8)
+        h=h.unsqueeze(1)
        # print('output',h.shape)
         return h
         # finally project transformer outputs to class labels and bounding boxes
