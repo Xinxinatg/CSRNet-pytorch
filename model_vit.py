@@ -2,7 +2,8 @@ import torch
 import torch.nn.functional as F
 from einops import rearrange, repeat
 from torch import nn
-
+from torchvision import models
+torch.set_grad_enabled(True);
 MIN_NUM_PATCHES = 16
 
 class Residual(nn.Module):
@@ -84,7 +85,7 @@ class Transformer(nn.Module):
         return x
 
 class ViT(nn.Module):
-    def __init__(self, *, image_size, patch_size, num_classes, dim, depth, heads, mlp_dim, pool = 'cls', channels = 3, dim_head = 64, dropout = 0., emb_dropout = 0.):
+    def __init__(self, *, image_size, patch_size, num_classes, dim, depth, heads, mlp_dim, pool = 'cls', channels = 3, dim_head = 64, dropout = 0., emb_dropout = 0., load_weights=False):
         super().__init__()
         assert image_size % patch_size == 0, 'Image dimensions must be divisible by the patch size.'
         num_patches = (image_size // patch_size) ** 2
@@ -108,6 +109,9 @@ class ViT(nn.Module):
             nn.LayerNorm(dim),
             nn.Linear(dim, num_classes)
         )
+        if not load_weights:
+            mod = models.vgg16(pretrained = True)
+            self._init_weights()
 
     def forward(self, img, mask = None):
         p = self.patch_size
@@ -131,4 +135,22 @@ class ViT(nn.Module):
        # print('b',b)
       #  print('h_temp',h_temp)
         x= x.view(b,h_temp//8,w_temp//8)
+        x=x.unsqueeze(1)
         return x
+    def _init_weights(self):
+      """ Initialize the weights """
+      for m in self.modules():
+       #   if isinstance(m, nn.Linear):
+      #        # Slightly different from the TF version which uses truncated_normal for initialization
+              # cf https://github.com/pytorch/pytorch/pull/5617
+    #          m.weight.data.normal_(mean=0.0, std=self.config.initializer_range)
+       #       torch.nn.init.xavier_uniform(m.weight)
+     #         m.bias.data.fill_(0.01)
+  #       elif isinstance(m, BertLayerNorm):
+    #         module.bias.data.zero_()
+      #        module.weight.data.fill_(1.0)
+          #elif isinstance(m, nn.Conv2d):
+          if isinstance(m, nn.Conv2d):
+                nn.init.normal_(m.weight, std=0.01)
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
